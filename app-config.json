@@ -10,6 +10,10 @@
     "hideIOSSafeAreaBottom": true,
     "hideAndroidBottomNavigationBar": false
   },
+  "permissions": {
+    "user.info": "Dùng để hiển thị tên người chơi trong game",
+    "user.phoneNumber": "Dùng để xác thực và lưu trữ điểm thưởng của người chơi"
+  },
   "listCSS": [],
   "listSyncJS": [],
   "listAsyncJS": []
