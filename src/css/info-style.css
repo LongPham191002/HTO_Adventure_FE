@@ -146,8 +146,55 @@
 /* Box đồng ý */
 .agree-box-custom {
   background: rgba(224, 242, 255, 0.4);
-  padding: 12px 15px;
+  padding: 20px 30px;
   border-radius: 1.5rem;
   border: 1px dashed #3a9edb;
   margin-top: 10px;
+  display: flex;
+}
+
+
+/* --- PHẦN GIỮ NGUYÊN CSS CŨ CỦA BẠN --- */
+
+/* --- CẬP NHẬT ĐỒNG BỘ DATEPICKER & INPUT --- */
+
+/* Đảm bảo khung bọc DatePicker không làm mất style */
+.datepicker-trigger-wrapper {
+  width: 100%;
+  cursor: pointer;
+}
+
+/* Ép kiểu cho Input bên trong DatePicker giống hệt Input thường */
+.datepicker-trigger-wrapper .hito-input-custom {
+  pointer-events: none; /* Để click xuyên qua div bọc ngoài */
+}
+
+/* Tùy chỉnh màu sắc bảng chọn ngày (Pop-up khi hiện lên) */
+.zaui-picker-container {
+  border-radius: 2rem 2rem 0 0 !important;
+  background: #ffffff !important;
+}
+
+.zaui-picker-header {
+  background: #f0f8ff !important;
+  border-bottom: 2px solid #b5dfff !important;
+}
+
+.zaui-picker-header-title {
+  color: #0e4b75 !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+}
+
+/* Màu cho các nút Xong/Hủy trên lịch */
+.zaui-picker-header-button {
+  color: #3a9edb !important;
+  font-weight: 800 !important;
+}
+
+/* Xử lý padding để ô nhập SĐT không bị lệch khi bỏ nút xác thực cũ */
+.hito-input-custom input {
+  padding-right: 18px !important; /* Trả về padding mặc định */
+  font-weight: 700 !important;
+  color: #0e4b75 !important;
 }
