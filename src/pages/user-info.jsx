@@ -148,6 +148,7 @@ function UserInfoPage() {
         <Button
           className="btn-3d-primary"
           onClick={() => {
+            navigate("/game");
             if (!user.name || !user.phone) alert("Vui lòng điền đủ thông tin!");
             else if (!agree) alert("Vui lòng đồng ý điều khoản!");
             else navigate("/game");
