@@ -15,8 +15,8 @@ function HomePage() {
   const navigate = useNavigate();
   const [showGuide, setShowGuide] = useState(false);
 
-  // Logic xử lý khi nhấn nút Chơi Ngay
-  const handlePlayNow = async () => {
+  // Logic xử lý khi chọn game
+  const handleSelectGame = async (gameType) => {
     try {
       // 1. Xin quyền truy cập UserInfo và SĐT
       await authorize({ scopes: ["scope.userInfo", "scope.userPhonenumber"] });
@@ -38,7 +38,6 @@ function HomePage() {
           });
           const result = await response.json();
           if (result.success) {
-            // Chuyển 84 thành 0
             phoneNumber = (result.phoneNumber || result.data?.number || "").replace(/^84/, '0');
           }
         } catch (err) {
@@ -46,19 +45,25 @@ function HomePage() {
         }
       }
 
-      // 4. Lưu dữ liệu vào "túi" localStorage để trang sau dùng
+      // 4. Lưu dữ liệu
       localStorage.setItem("hito_zalo_data", JSON.stringify({
         name: userInfo?.name || "",
         phone: phoneNumber || ""
       }));
 
-      // 5. Mở popup quan tâm OA (ID của HTO Group)
+      // 5. Mở popup quan tâm OA
       await followOA({ id: "2112176407138597287" });
     } catch (e) {
       console.log("User từ chối hoặc lỗi hệ thống:", e);
     }
-    // Chuyển sang trang nhập thông tin
-    navigate("/user-info");
+
+    // Chuyển sang trang nhập thông tin (hoặc vào thẳng game nếu muốn)
+    // Ở đây ta vẫn qua user-info để kiểm tra lại thông tin
+    if (gameType === "adventure") {
+      navigate("/user-info");
+    } else {
+      navigate("/lucky-spin");
+    }
   };
 
   return (
@@ -76,19 +81,38 @@ function HomePage() {
           <img src={mascot} alt="Hito Mascot" className="mascot-image" />
         </Box>
 
-        <Box className="mt-6 text-center w-full">
-          <Text className="text-[#0e4b75] font-black text-4xl uppercase tracking-tight mb-2 italic">Điểm đổi quà</Text>
-          <Box className="h-1 w-16 bg-[#3a9edb] mx-auto rounded-full mb-3 opacity-40" />
+        <Box className="mt-4 text-center w-full">
+          <Text className="text-[#0e4b75] font-black text-3xl uppercase tracking-tight mb-1 italic">Chọn trò chơi</Text>
+          <Box className="h-1 w-12 bg-[#3a9edb] mx-auto rounded-full mb-4 opacity-40" />
 
-          <Box flex justifyContent="space-around" className="mb-6 items-end px-2">
+          <Box className="game-selection-container">
+            {/* Game Hito Adventure */}
+            <Box className="game-card" onClick={() => handleSelectGame("adventure")}>
+              <Box className="game-card-icon-wrapper">
+                <Icon icon="zi-location-solid" size={32} className="text-[#3a9edb]" />
+              </Box>
+              <Text className="game-card-title">Hito<br/>Adventure</Text>
+              <Button className="btn-game-select btn-adventure">CHƠI NGAY</Button>
+            </Box>
+
+            {/* Game Vòng quay may mắn */}
+            <Box className="game-card" onClick={() => handleSelectGame("spin")}>
+              <Box className="game-card-icon-wrapper">
+                <Icon icon="zi-star-solid" size={32} className="text-[#f9d423]" />
+              </Box>
+              <Text className="game-card-title">Vòng quay<br/>may mắn</Text>
+              <Button className="btn-game-select btn-spin">QUAY NGAY</Button>
+            </Box>
+          </Box>
+        </Box>
+
+        <Box className="mt-6 text-center w-full border-t border-gray-100 pt-4">
+          <Text className="text-[#0e4b75] font-black text-lg uppercase tracking-tight mb-2 italic">Quà tặng hấp dẫn</Text>
+          <Box flex justifyContent="space-around" className="items-end px-1">
             <RewardItem img={iconMockhoa} name="MÓC KHÓA" pts="500" />
             <RewardItem img={iconSach} name="SÁCH HỌC" pts="1500" />
             <RewardItem img={iconKhoahoc} name="KHOÁ HỌC" pts="2500" />
           </Box>
-        </Box>
-
-        <Box className="w-full">
-          <Button className="btn-play-now" onClick={handlePlayNow}>CHƠI NGAY</Button>
         </Box>
       </Box>
 
@@ -99,8 +123,8 @@ function HomePage() {
       <Modal visible={showGuide} title="HƯỚNG DẪN CHƠI" onClose={() => setShowGuide(false)} verticalActions>
         <Box className="p-4">
           <Box className="space-y-4">
-            <GuideStep step="1" content="Nhấn 'CHƠI NGAY' để bắt đầu." />
-            <GuideStep step="2" content="Vượt chướng ngại vật để tích điểm." />
+            <GuideStep step="1" content="Chọn trò chơi yêu thích từ màn hình chính." />
+            <GuideStep step="2" content="Vượt thử thách hoặc quay số để tích điểm." />
             <GuideStep step="3" content="Dùng điểm đổi quà từ HTO Group." />
           </Box>
           <Button fullWidth className="mt-6 bg-[#3a9edb] rounded-full font-bold text-white h-12" onClick={() => setShowGuide(false)}>ĐÃ HIỂU!</Button>
