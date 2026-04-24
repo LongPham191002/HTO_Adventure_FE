@@ -13,6 +13,7 @@ import HomePage from "../pages/index";
 import UserInfoPage from "../pages/user-info";
 import GamePage from "../pages/game"; // Thêm dòng này
 import ResultPage from "../pages/result"; // Thêm dòng này
+import LuckySpinPage from "../pages/lucky-spin"; // Thêm dòng này
 
 const Layout = () => {
   return (
@@ -31,6 +32,9 @@ const Layout = () => {
 
             {/* 4. Thêm Route cho trang Result */}
             <Route path="/result" element={<ResultPage />} />
+
+            {/* 5. Thêm Route cho trang Lucky Spin */}
+            <Route path="/lucky-spin" element={<LuckySpinPage />} />
             
           </AnimationRoutes>
         </ZMPRouter>

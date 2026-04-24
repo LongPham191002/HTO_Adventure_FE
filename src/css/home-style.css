@@ -52,7 +52,7 @@
 .home-main-card {
   background-color: white;
   margin: 115px 18px 0 18px;
-  padding: 40px 25px;
+  padding: 30px 20px;
   border-radius: 3rem;
   border: 4px solid #ffffff; 
   box-shadow: 0 20px 40px rgba(58, 158, 219, 0.15);
@@ -61,6 +61,75 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+/* Game Selection */
+.game-selection-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.game-card {
+  background: white;
+  border-radius: 1.5rem;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  border: 2px solid #eef7ff;
+  box-shadow: 0 8px 16px rgba(58, 158, 219, 0.1);
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.game-card:active {
+  transform: scale(0.95);
+  background-color: #f0f9ff;
+}
+
+.game-card-icon-wrapper {
+  width: 60px;
+  height: 60px;
+  background: #f0f9ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.game-card-title {
+  color: #0e4b75;
+  font-weight: 900;
+  font-size: 14px;
+  text-transform: uppercase;
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+
+.btn-game-select {
+  width: 100%;
+  height: 36px !important;
+  border-radius: 9999px !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+}
+
+.btn-adventure {
+  background: #3a9edb !important;
+  color: white !important;
+  box-shadow: 0 4px 10px rgba(58, 158, 219, 0.3) !important;
+}
+
+.btn-spin {
+  background: #f9d423 !important;
+  color: #0e4b75 !important;
+  box-shadow: 0 4px 10px rgba(249, 212, 35, 0.3) !important;
 }
 
 .mascot-container {
