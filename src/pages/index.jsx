@@ -16,56 +16,64 @@ function HomePage() {
   const [showGuide, setShowGuide] = useState(false);
 
   // Logic xử lý khi nhấn nút Chơi Ngay
-  const handlePlayNow = async () => {
+const handlePlayNow = async () => {
     try {
-      // 1. Xin quyền truy cập UserInfo và SĐT
+      await followOA({ id: "2112176407138597287" });
       await authorize({ scopes: ["scope.userInfo", "scope.userPhonenumber"] });
-      
-      // 2. Lấy Tên Zalo
       const { userInfo } = await getUserInfo({});
       
-      // 3. Lấy SĐT và giải mã qua Backend Local của em (Cổng 8000)
       const phoneRes = await getPhoneNumber({});
       const accessToken = await getAccessToken({});
       
+      // LOG KIỂM TRA ĐẦU VÀO
+      console.log("---------- [FE DEBUG] ----------");
+      console.log("Token SĐT:", phoneRes.token);
+      console.log("AccessToken:", accessToken ? "Đã lấy được" : "Chưa có");
+
       let phoneNumber = "";
-      if (phoneRes.token) {
-        try {
-          const response = await fetch("http://localhost:8000/get-phone", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ accessToken, code: phoneRes.token }),
-          });
-          const result = await response.json();
-          if (result.success) {
-            // Chuyển 84 thành 0
-            phoneNumber = (result.phoneNumber || result.data?.number || "").replace(/^84/, '0');
-          }
-        } catch (err) {
-          console.error("Lỗi gọi Backend giải mã SĐT:", err);
+
+      // CHỈ FETCH KHI CÓ TOKEN (Tránh lỗi undefined gửi lên BE)
+      if (phoneRes.token && accessToken) {
+        //http://localhost:9000/get-phone-new
+        const response = await fetch("https://api.hto.edu.vn/get-phone-new", {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ accessToken, code: phoneRes.token }),
+        });
+
+        const result = await response.json();
+        
+        // LOG DỮ LIỆU TRẢ VỀ TỪ BACKEND
+        console.log("Dữ liệu nhận được từ BE:", result);
+
+        if (result.success && result.phone) {
+          phoneNumber = result.phone.replace(/\D/g, '').replace(/^84/, '0');
+        } 
+        else if (result.data && result.data.number) {
+          phoneNumber = result.data.number.replace(/\D/g, '').replace(/^84/, '0');
         }
+      } else {
+        console.warn("⚠️ Không lấy được Token từ Zalo. Kiểm tra thiết bị test hoặc quyền App!");
       }
 
-      // 4. Lưu dữ liệu vào "túi" localStorage để trang sau dùng
+      console.log("SĐT cuối cùng lưu vào LocalStorage:", phoneNumber);
+
       localStorage.setItem("hito_zalo_data", JSON.stringify({
-        name: userInfo?.name || "",
+        name: userInfo?.name || "Khách hàng",
         phone: phoneNumber || ""
       }));
 
-      // 5. Mở popup quan tâm OA (ID của HTO Group)
-      await followOA({ id: "2112176407138597287" });
+      navigate("/user-info");
     } catch (e) {
-      console.log("User từ chối hoặc lỗi hệ thống:", e);
+      console.error("🔥 Lỗi luồng xử lý:", e);
+      navigate("/user-info");
     }
-    // Chuyển sang trang nhập thông tin
-    navigate("/user-info");
   };
-
   return (
     <Page className="home-page-container" style={{ backgroundImage: `url(${bgMain})` }}>
       <Box className="home-header">
         <Text className="logo-main-text">HITO</Text>
-        <Text className="logo-main-text" style={{ lineHeight: "0.8" }}>ADVENTURE</Text>
+        <Text className="logo-main-text">ADVENTURE</Text>
         <Box className="logo-sub-pill">
           <Text className="logo-sub-text-white">by HTO Group</Text>
         </Box>
@@ -81,9 +89,9 @@ function HomePage() {
           <Box className="h-1 w-16 bg-[#3a9edb] mx-auto rounded-full mb-3 opacity-40" />
 
           <Box flex justifyContent="space-around" className="mb-6 items-end px-2">
-            <RewardItem img={iconMockhoa} name="MÓC KHÓA" pts="500" />
-            <RewardItem img={iconSach} name="SÁCH HỌC" pts="1500" />
-            <RewardItem img={iconKhoahoc} name="KHOÁ HỌC" pts="2500" />
+            <RewardItem img={iconMockhoa} name="MÓC KHÓA" pts="55" />
+            <RewardItem img={iconSach} name="SÁCH HỌC" pts="75" />
+            <RewardItem img={iconKhoahoc} name="KHOÁ HỌC" pts="100" />
           </Box>
         </Box>
 

@@ -12,7 +12,6 @@
 /* 2. Header Logo - Hiệu ứng Glow nhẹ */
 .user-info-header {
   margin-top: 45px;
-  margin-bottom: 5px;
   z-index: 20;
   display: flex;
   flex-direction: column;
@@ -26,19 +25,33 @@
 }
 
 .logo-text-large {
-  color: #3a9edb;
-  font-weight: 900;
-  font-size: 46px;
+  /* 1. Gradient đồng bộ: Vàng sáng sang Xanh đậm #0e4b75 */
+  background: linear-gradient(180deg, #ffffff 100%, #f9d423 40%);
+  
+  /* Kỹ thuật đổ màu vào chữ (Bắt buộc phải có) */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+
+  /* 2. Giữ nguyên kích thước riêng của logo-text-large */
+  font-weight: 1000;
+  font-size: 35px;
   line-height: 0.7;
-  /* Hiệu ứng đổ bóng chữ chuyên nghiệp */
-  text-shadow: 0 4px 0px #ffffff, 0 8px 15px rgba(58, 158, 219, 0.4);
+  margin: 5px;
+
+  /* 3. Hiệu ứng đổ bóng 3D giống logo-main-text */
+  /* Lớp 1: Đổ bóng trắng 4px tạo chân chữ nổi khối (Rất quan trọng) */
+  /* Lớp 2: Đổ bóng xanh đậm tạo độ sâu trường ảnh */
+  filter: drop-shadow(0 5px 0px rgba(14, 75, 117, 0.3)) 
+          drop-shadow(0 0px 4px #f9d423);
 }
 
 /* 3. Form Card - Phong cách Glassmorphism nhẹ */
 .user-info-card {
   background: rgba(255, 255, 255, 0.95);
   margin: 95px 10px 5px;
-  padding: 5px 20px 10px;
+  padding: 15px 20px 10px;
   border-radius: 3rem;
   border: 4px solid #ffffff; 
   box-shadow: 
@@ -51,7 +64,7 @@
 /* Mascot - Tăng size và đổ bóng bay bổng */
 .mascot-wrapper {
   position: absolute;
-  top: -130px;
+  top: -115px;
   left: 0;
   right: 0;
   display: flex;
@@ -60,7 +73,7 @@
 }
 
 .mascot-img-ui {
-  width: 220px;
+  width: 200px;
   filter: drop-shadow(0 20px 30px rgba(58, 158, 219, 0.3));
   animation: mascot-swing 5s ease-in-out infinite;
 }

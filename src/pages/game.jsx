@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Box, Button, Page, Text } from "zmp-ui";
 import { useNavigate } from "react-router-dom";
+import axios from "axios"; // Đã thêm axios
 import mascot from "../assets/game.png";
 import gameBackground1 from "../assets/game-background-1.png";
 import gameBackground2 from "../assets/game-background-2.png";
@@ -80,6 +81,34 @@ const GamePage = () => {
     }
   };
 
+  const handleContinue = () => {
+    // --- LOGIC GỬI DATA KHI BẤM TIẾP TỤC ---
+    const savedData = localStorage.getItem("hito_player_data");
+    if (savedData) {
+      const userData = JSON.parse(savedData);
+      let gift = "Móc khóa";
+      if (score >= 2500) gift = "Khoá học";
+      else if (score >= 1500) gift = "Sách học";
+
+      const payload = {
+        ...userData,
+        score: score,
+        gift_name: gift,
+        submitted_at: new Date().toLocaleString("vi-VN"),
+      };
+
+      const BACKEND_URL = "https://api.hto.edu.vn/api/hito/submit";
+      axios.post(BACKEND_URL, payload)
+        .then(() => {
+          console.log("✅ [Hito] Đã gửi data thành công từ GamePage.");
+          localStorage.removeItem("hito_player_data");
+        })
+        .catch(err => console.error("❌ [Hito] Lỗi gửi data:", err.message));
+    }
+    // Chuyển trang
+    navigate("/result", { state: { score: score } });
+  };
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -95,7 +124,7 @@ const GamePage = () => {
         fishY.current += fishVelocity.current;
         if (fishY.current >= groundY) { fishY.current = groundY; fishVelocity.current = 0; }
         
-        const currentSpeed = BASE_PIPE_SPEED + Math.floor(score / 12) * 0.6;
+        const currentSpeed = BASE_PIPE_SPEED + Math.floor(score / 7) * 0.6;
         bgX1.current = (bgX1.current - currentSpeed * 0.3) % canvas.width;
         bgX2.current = (bgX2.current - currentSpeed * 0.6) % canvas.width;
 
@@ -123,7 +152,6 @@ const GamePage = () => {
         particles.current.forEach((p, i) => { p.x += p.vx; p.y += p.vy; p.life -= 0.02; if(p.life <= 0) particles.current.splice(i, 1); });
       }
 
-      // VẼ GIAO DIỆN LÊN CANVAS
       ctx.fillStyle = "#0e4b75";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       if (imgs.current.bg1.complete) {
@@ -160,8 +188,6 @@ const GamePage = () => {
   return (
     <Page className="game-page-container p-0 overflow-hidden">
       <div className="scanline"></div>
-
-      {/* Header Logo */}
       <Box className="logo-game-header absolute top-0 w-full">
         <Text className="logo-main-text-game">HITO</Text>
         <Text className="logo-main-text-game" style={{ lineHeight: "0.8" }}>ADVENTURE</Text>
@@ -171,7 +197,6 @@ const GamePage = () => {
       </Box>
 
       <Box className="relative w-full h-full" onClick={jump}>
-        {/* Điểm số đang chơi */}
         <Box className="absolute top-40 w-full flex justify-center z-10 pointer-events-none">
           <div className={`score-container ${isScoring ? "score-pop" : ""}`}>
             <Text className="text-white text-6xl font-black italic drop-shadow-md">{score}</Text>
@@ -180,7 +205,6 @@ const GamePage = () => {
 
         <canvas ref={canvasRef} className="block w-full h-full" />
 
-        {/* POPUP TRẠNG THÁI */}
         {gameState !== "PLAYING" && (
           <Box className="absolute inset-0 bg-[#0e4b75]/50 backdrop-blur-sm flex items-center justify-center z-20 p-6">
             <Box className="bg-white rounded-[50px] p-8 w-full max-w-xs text-center shadow-2xl border-[5px] border-[#3a9edb]">
@@ -203,25 +227,13 @@ const GamePage = () => {
               )}
 
               <Box className="space-y-4">
-                {/* 1. Nếu đang ở màn hình Bắt đầu (START) */}
                 {gameState === "START" && (
-                  <Button className="btn-hito-primary" onClick={resetGame}>
-                    CHƠI NGAY
-                  </Button>
+                  <Button className="btn-hito-primary" onClick={resetGame}>CHƠI NGAY</Button>
                 )}
-
-                {/* 2. Nếu đã thua (GAME_OVER) */}
                 {gameState === "GAME_OVER" && (
                   <>
-                    <Button className="btn-hito-primary" onClick={resetGame}>
-                      THỬ LẠI
-                    </Button>
-                    <Button 
-                      className="btn-hito-secondary" 
-                      onClick={() => navigate("/result", { state: { score: score } })}
-                    >
-                      TIẾP TỤC
-                    </Button>
+                    <Button className="btn-hito-primary" onClick={resetGame}>THỬ LẠI</Button>
+                    <Button className="btn-hito-secondary" onClick={handleContinue}>TIẾP TỤC</Button>
                   </>
                 )}
               </Box>
